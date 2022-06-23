@@ -40,7 +40,7 @@ enum class TabHostInfo(val index: Int, val icon: String, val dess: String) {
             return FirstFragment()::class.java.name
         }
     },
-    SECOND(1, "Second", "排行榜") {
+    SECOND(1, "Second", "记录") {
         override fun toString(): String {
             return "Second"
         }

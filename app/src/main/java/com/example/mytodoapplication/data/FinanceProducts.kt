@@ -1,20 +1,25 @@
 package com.example.mytodoapplication.data
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 /**
  * Created by zp on 2022/4/3 11:22
  */
+@Entity(tableName = "FinanceProducts")
 class FinanceProducts {
-    var productName: String? = null
 
-    //    产品周期
-    var period: Int = 1
+    @PrimaryKey
+    var uid = 0
 
-    //    产品开始日期
-    var startTime: String? = null
+    @ColumnInfo(name = "date")
+    val date: Long = 0L
 
-    //    产品最近可赎回日期
-    var ransomTimeLatest: String? = null
+    @ColumnInfo(name = "type")
+    val type: ConsumptionType? = null
 
-    //  收益
-    var income: Int = 0
+    @ColumnInfo(name = "money")
+    val money: Int = 0
+
 }
