@@ -2,6 +2,7 @@ package com.example.mytodoapplication
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.example.basesdkzp.test.Test
 import com.example.mytodoapplication.tool.MyTabHost
 import com.example.mytodoapplication.tool.TabHostInfo
 
@@ -14,6 +15,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initView() {
         initTabHost()
+        Test.test()
     }
 
     private fun initTabHost() {
