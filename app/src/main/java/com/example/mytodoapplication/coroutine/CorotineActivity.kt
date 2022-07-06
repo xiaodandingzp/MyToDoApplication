@@ -9,6 +9,7 @@ import kotlinx.coroutines.*
 
 /*
 * launch 启动新的协程
+* 当使用join函数时，会挂起函数直到结果执行结束
 * 不会阻塞直到结果返回  不会阻塞线程  并行执行
 * withContext: 挂起协程 没有启动新的
 * 会阻塞当前协程直到函数返回
@@ -42,7 +43,17 @@ class CorotineActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_corotine)
         findViewById<Button>(R.id.button_corotine_test).setOnClickListener {
-            testAsync()
+            Thread {
+                Log.i(TAG, "thread000:${Thread.currentThread().name}")
+                GlobalScope.launch {
+                    delay(3000)
+                    Log.i(TAG, "thread111:${Thread.currentThread().name}")
+                    Log.i(TAG, "1111111")
+                }
+                Log.i(TAG, "222222")
+            }.start()
+            Log.i(TAG, "thread333:${Thread.currentThread().name}")
+            Log.i(TAG, "3333333333")
         }
     }
 
@@ -96,7 +107,11 @@ class CorotineActivity : AppCompatActivity() {
             }
         }
 
+//        runBlocking将主线程变成了协程
         runBlocking {
+            launch {
+                Log.i(TAG, "")
+            }
 //            async作为根协程
             val test2 = GlobalScope.async {
                 throw Exception("test2222")
@@ -137,6 +152,12 @@ class CorotineActivity : AppCompatActivity() {
         }
         coroutineScope.launch {
             Log.d("xys", "test")
+        }
+    }
+
+    private fun testGlobalScope() {
+        GlobalScope.launch {
+            Log.i(TAG, "testGlobalScope")
         }
     }
 }
