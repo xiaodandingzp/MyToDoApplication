@@ -43,18 +43,22 @@ class CorotineActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_corotine)
         findViewById<Button>(R.id.button_corotine_test).setOnClickListener {
-            Thread {
-                Log.i(TAG, "thread000:${Thread.currentThread().name}")
-                GlobalScope.launch {
-                    delay(3000)
-                    Log.i(TAG, "thread111:${Thread.currentThread().name}")
-                    Log.i(TAG, "1111111")
-                }
-                Log.i(TAG, "222222")
-            }.start()
-            Log.i(TAG, "thread333:${Thread.currentThread().name}")
-            Log.i(TAG, "3333333333")
+            testRunBlocking()
         }
+    }
+
+    private fun testRunBlocking() = runBlocking {
+        val scope = CoroutineScope(Dispatchers.Default)
+        scope.launch {
+            delay(2000)
+            Log.i(TAG, "11111")
+        }
+        scope.launch {
+            delay(2000)
+            Log.i(TAG, "22222")
+        }
+        delay(200)
+        scope.cancel()
     }
 
     private fun testAsync() {
@@ -96,6 +100,13 @@ class CorotineActivity : AppCompatActivity() {
             supervisorScope {
                 val test1 = async {
                     throw Exception("test 111")
+                }
+                runBlocking {
+
+                }
+
+                coroutineScope {
+
                 }
 
                 try {
@@ -143,7 +154,7 @@ class CorotineActivity : AppCompatActivity() {
     private fun testCorotineScope() {
         val coroutineScope = CoroutineScope(Job())
 
-        coroutineScope.launch() {
+        coroutineScope.launch {
             try {
                 throw Exception("test")
             } catch (e: Exception) {
@@ -158,6 +169,22 @@ class CorotineActivity : AppCompatActivity() {
     private fun testGlobalScope() {
         GlobalScope.launch {
             Log.i(TAG, "testGlobalScope")
+            delay(200)
+            delay(2000)
+            Log.i(TAG, "sssssss")
+        }
+    }
+
+    private fun testSuspend() {
+        println("main start")
+        GlobalScope.launch {
+            println("async start")
+            val b = async {
+                delay(2000)
+                "async"
+            }
+            b.await()
+            println("async end")
         }
     }
 }
