@@ -6,6 +6,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.coroutines.resume
 
 /**
@@ -35,15 +36,12 @@ suspend fun Lifecycle.tryWaitState(
                 }
             }
         }
-
     } else {
-        if (!currentState.isAtLeast(state)) {
-            beforeAwait?.invoke()
-            delay(timeOut)
+        if (currentState.isAtLeast(state)) {
+            true
+        }
+        withTimeoutOrNull(timeOut) {
             currentState.isAtLeast(state)
-        } else true
+        } ?: false
     }
-}
-
-suspend fun test() {
 }
