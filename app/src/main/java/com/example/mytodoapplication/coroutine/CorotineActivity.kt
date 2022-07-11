@@ -6,6 +6,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mytodoapplication.R
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 /*
 * launch 启动新的协程
@@ -43,26 +44,34 @@ class CorotineActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_corotine)
         findViewById<Button>(R.id.button_corotine_test).setOnClickListener {
-            testRunBlocking()
+            testFlow()
         }
     }
 
     private fun testRunBlocking() = runBlocking {
-        val scope = CoroutineScope(Dispatchers.Default)
+        launch {
+            delay(5000)
+            Log.i(TAG, "-1-1-1thread.name:${Thread.currentThread().name}")
+        }
+        val scope = CoroutineScope(Job())
+        Log.i(TAG, "000thread.name:${Thread.currentThread().name}")
         scope.launch {
             delay(2000)
+            Log.i(TAG, "111thread.name:${Thread.currentThread().name}")
             Log.i(TAG, "11111")
         }
         scope.launch {
             delay(2000)
+            Log.i(TAG, "222thread.name:${Thread.currentThread().name}")
             Log.i(TAG, "22222")
         }
-        delay(200)
+        Log.i(TAG, "4444thread.name:${Thread.currentThread().name}")
+        delay(3000)
         scope.cancel()
     }
 
     private fun testAsync() {
-        GlobalScope.launch {
+        GlobalScope.launch(Job() + Dispatchers.Default) {
             val test1 = async {
                 delay(2000)
                 Log.i(TAG, "test1    1111111")
@@ -76,6 +85,50 @@ class CorotineActivity : AppCompatActivity() {
 //            await挂起当前协程 等待相应协程执行结束
             val result = test1.await() + test2.await()
             Log.i(TAG, "result: $result")
+        }
+    }
+
+    private fun testFlow() = runBlocking {
+        val testSequence = sequence<Int> {
+//            同步返回多个值 不能调用SequenceScope定义之外的其他的挂起函数
+            for (i in 1..3) {
+                Thread.sleep(1000)
+                yield(i)
+            }
+        }
+        testSequence.forEach {
+            Log.i(TAG, "test test i: $it")
+        }
+        Log.i(TAG, "test test 111111")
+        launch {
+//                异步返回多个值 可用于进度条进度的更新 可以调用其他挂起函数
+//            flow的构建方式一
+            val flowTest = flow<Int> {
+                for (i in 1..3) {
+                    delay(1000)
+                    emit(i)
+                }
+            }
+            flowTest.collect {
+                Log.i(TAG, "i: $it")
+            }
+        }
+        Log.i(TAG, "test test 22222")
+//      flow的构建方式二  flowOn更改flow的上下文
+//      launchIn（返回的是Job对象）替换collect 可以在单独的协程中启动流的收集
+        flowOf("one", "two", "three")
+            .onEach {
+                delay(1000)
+                Log.i(TAG, "i: $it  thread.name:${Thread.currentThread().name}")
+            }.flowOn(Dispatchers.Default)
+            .collect {
+                Log.i(TAG, "i: $it  thread.name:${Thread.currentThread().name}")
+            }
+//      flow的构建方式三
+        (5..9).asFlow().onEach {
+            delay(1000)
+        }.collect {
+            Log.i(TAG, "it: $it")
         }
     }
 
