@@ -45,7 +45,7 @@ class CorotineActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_corotine)
         findViewById<Button>(R.id.button_corotine_test).setOnClickListener {
-            testFlowBackPressure()
+            testFlowExcept()
         }
     }
 
@@ -283,6 +283,46 @@ class CorotineActivity : AppCompatActivity() {
             }
             b.await()
             println("async end")
+        }
+    }
+
+    private fun testZip() = runBlocking {
+        val first = (1..3).asFlow()
+        val second = (2..5).asFlow()
+        first.zip(second) { i: Int, i1: Int ->
+            Log.i(TAG, "i:$i  i1:$i1")
+            i + i1
+        }.collect {
+            Log.i(TAG, "it:$it")
+        }
+    }
+
+    private fun testFlowExcept() = runBlocking {
+        flow<Int> {
+            emit(2)
+            throw Exception("testFlowExcept")
+        }.catch { e: Throwable ->
+            Log.i(TAG, "$e")
+            emit(3)
+        }.onCompletion {
+            Log.i(TAG, "completion")
+        }.collect {
+            Log.i(TAG, "it:$it")
+        }
+    }
+
+    private fun testSuspendThread() {
+        Log.i(TAG, "out thread.name:${Thread.currentThread().name}")
+        GlobalScope.launch {
+            Log.i(TAG, "GlobalScope thread.name:${Thread.currentThread().name}")
+            suspendCancellableCoroutine<Unit> {
+                Log.i(TAG, "suspendCancellableCoroutine thread.name:${Thread.currentThread().name}")
+                it.resume(Unit, null)
+            }
+            Log.i(
+                TAG,
+                " after suspendCancellableCoroutine thread.name:${Thread.currentThread().name}"
+            )
         }
     }
 }

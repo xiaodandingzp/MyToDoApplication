@@ -78,3 +78,12 @@ dependencies {
 
     implementation project(":basesdkzp")
 }
+
+class HelloPlugin implements Plugin<Project>{
+    @Override
+    void apply(Project project) {
+        println("zppppppppppppppppppp")
+    }
+}
+
+println("basesdkzp  end  end ")
