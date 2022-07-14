@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.mytodoapplication.R
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlin.system.measureTimeMillis
 
 /*
 * launch 启动新的协程
@@ -44,7 +45,7 @@ class CorotineActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_corotine)
         findViewById<Button>(R.id.button_corotine_test).setOnClickListener {
-            testFlow()
+            testFlowBackPressure()
         }
     }
 
@@ -115,6 +116,7 @@ class CorotineActivity : AppCompatActivity() {
         }
         Log.i(TAG, "test test 22222")
 //      flow的构建方式二  flowOn更改flow的上下文
+//        flowOn操作符对上游范围有效, 范围是指两个flowOn之间, 如果只有一个flowOn,则上游全部有效
 //      launchIn（返回的是Job对象）替换collect 可以在单独的协程中启动流的收集
         flowOf("one", "two", "three")
             .onEach {
@@ -130,6 +132,49 @@ class CorotineActivity : AppCompatActivity() {
         }.collect {
             Log.i(TAG, "it: $it")
         }
+    }
+
+    fun testFlowEmit() =
+        flow<Int> {
+            for (i in 1..5) {
+                delay(1000)
+                emit(i)
+                Log.i(TAG, "testFlowCancel emit: $i")
+            }
+        }
+
+    /*
+    *流构建器对每个发射值执行附加的ensureActive检测以进行取消，这意味着从flow{}发出的繁忙循环是可以取消的
+    * 出于性能原因，大多数其他流操作不会自行执行其他取消操作，在协程繁忙的情况下，必须明确检测是否取消
+    * 通过cancelable来执行此操作
+    */
+    private fun testFlowCancelReceive() = runBlocking {
+        (1..5).asFlow().cancellable().collect {
+            Log.i(TAG, "testFlowCancelReceive: $it")
+            if (it == 3) cancel()
+        }
+    }
+
+    /*
+    *背压：发射者发射速度，大于接收者处理的速度
+    * buffer(),并发运行流中发射的元素。（）将发送的值先缓存起来
+    * conflate(),合并发射项，不对每个值进行处理。积压多个未处理值时，选择最后一个，其他的丢弃
+    * collectLatest(),取消并重新发射最后一个值
+    */
+    private fun testFlowBackPressure() = runBlocking {
+        val time = measureTimeMillis {
+            testFlowEmit()
+//                .buffer(50)
+//                .conflate()
+                .onEach {
+//                    delay(3000)
+                }.collectLatest {
+//                .collect {
+                    delay(2000)
+                    Log.i(TAG, "testFlowBackPressure: $it")
+                }
+        }
+        Log.i(TAG, "time: $time")
     }
 
     private fun testLaunch() {
