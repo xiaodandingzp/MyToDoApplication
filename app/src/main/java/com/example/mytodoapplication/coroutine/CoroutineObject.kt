@@ -3,9 +3,7 @@ package com.example.mytodoapplication.coroutine
 import android.util.Log
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.selects.select
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.Semaphore
@@ -17,7 +15,23 @@ object CoroutineObject {
     const val TAG = "CoroutineObject"
 
     fun testEntrance() {
-        testSelectChannel()
+        testFlow()
+    }
+
+    fun testFlow() {
+        val mutStateFlow = MutableStateFlow<Int>(0)
+        GlobalScope.launch {
+            List(5) {
+                delay(1000)
+                Log.i(TAG, "mutStateFlow emit: $it")
+                mutStateFlow.value = it
+            }
+        }
+        GlobalScope.launch {
+            mutStateFlow.collect {
+                Log.i(TAG, "testFlow: it:$it")
+            }
+        }
     }
 
     fun testSelectChannel() = runBlocking {
