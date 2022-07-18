@@ -45,7 +45,7 @@ class CorotineActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_corotine)
         findViewById<Button>(R.id.button_corotine_test).setOnClickListener {
-            testFlowExcept()
+            CoroutineObject.testEntrance()
         }
     }
 
