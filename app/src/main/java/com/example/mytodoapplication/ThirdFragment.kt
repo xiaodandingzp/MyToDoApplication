@@ -2,11 +2,13 @@ package com.example.mytodoapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.example.basesdkzp.test.Test
 import com.example.mytodoapplication.coroutine.CorotineActivity
 
 /**
@@ -22,6 +24,12 @@ class ThirdFragment : Fragment() {
         val view = inflater.inflate(R.layout.third_fragment, null).apply {
             findViewById<Button>(R.id.coroutine).setOnClickListener {
                 startActivity(Intent(this@ThirdFragment.context, CorotineActivity::class.java))
+            }
+
+            findViewById<Button>(R.id.hook).setOnClickListener {
+                Thread {
+                    Log.i("Hook", "HookClassLoader start a Thread")
+                }.start()
             }
         }
         return view
