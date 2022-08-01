@@ -11,6 +11,6 @@ import com.example.mytodoapplication.hook.HookClassLoader
 class TestApplication : Application() {
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-        HookClassLoader.hook()
+//        HookClassLoader.hook()
     }
 }

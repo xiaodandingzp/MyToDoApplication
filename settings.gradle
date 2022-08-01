@@ -1,3 +1,5 @@
+include ':apt-annotation'
+include ':myapttest'
 include ':basesdkzp'
 include ':app'
 rootProject.name = "MyToDoApplication"

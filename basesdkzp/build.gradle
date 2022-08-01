@@ -42,4 +42,6 @@ dependencies {
     api 'com.swift.sandhook:hooklib:4.2.0'
     api 'com.swift.sandhook:nativehook:4.2.0'
     api 'com.swift.sandhook:xposedcompat:4.2.0'
+
+    annotationProcessor project(":myapttest")
 }

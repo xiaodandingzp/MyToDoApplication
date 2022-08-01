@@ -13,7 +13,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/apt-annotation" />
             <option value="$PROJECT_DIR$/basesdkzp" />
+            <option value="$PROJECT_DIR$/myapttest" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
