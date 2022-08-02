@@ -8,12 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.example.basesdkzp.test.Test
+import com.example.apt_annotation.FirstAnnotation
 import com.example.mytodoapplication.coroutine.CorotineActivity
 
 /**
  * Created by zp on 2022/4/7 14:48
  */
+@FirstAnnotation
 class ThirdFragment : Fragment() {
 
     override fun onCreateView(

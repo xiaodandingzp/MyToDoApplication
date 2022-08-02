@@ -106,5 +106,16 @@ internal annotation class Test(val parent: KClass<*> = Test::class)
 //apt基本配置
 /**
  *  参考文档： https://juejin.cn/post/6947992544252788767
+ * 配置后没有执行注解处理器的代码 参考文档：https://github.com/liujingxing/rxhttp/wiki/ksp%E3%80%81kapt%E3%80%81annotationProcessor-%E7%94%A8%E6%B3%95%E5%8F%8A%E5%8C%BA%E5%88%AB
  *
+ * annotationProcessor仅会检索Java代码，且没有用到注解时，不会工作；生成的代码在build/generated/ap_generated_sources目录下
+
+ * kapt是Kotlin时代的产物，会检索kotlin/java代码，但kotlin的一些专有属性拿不到，如const关键字、伴生对象等在代码层面无法判断，同样的，没有用到注解时，不会工作；生成的代码在build/generated/source/kapt目录下
+
+ * ksp则是最新的注解处理器，编译速度号称是kapt的2倍有余，且完全弥补了kapt/annotationProcessor的缺陷，但纯Java项目用不了，必需要集成kotlin；生成的代码在build/generated/ksp目录下
+ **/
+
+//AbstractProcessor的init方法有执行 但process()方法没有执行
+/**
+ * 重写getSupportedAnnotationTypes方法，因为没有监测到这个方法里添加的注解，不会执行process()
  **/

@@ -82,7 +82,10 @@ dependencies {
 
     implementation project(":basesdkzp")
     implementation project(":apt-annotation")
-    annotationProcessor project(":myapttest")
+    kapt project(":myapttest")
+//    implementation project(":mysecondapt-compiler")
+//    annotationProcessor project(":mysecondapt-compiler")
+//    kapt project(':mysecondapt-compiler')
     compileOnly files ('C:\\Program Files\\Java\\jdk1.8.0_201\\jre\\lib/rt.jar')
 }
 

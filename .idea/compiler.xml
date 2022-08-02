@@ -24,6 +24,7 @@
       <module name="apt-annotation" target="1.7" />
       <module name="libtest" target="1.7" />
       <module name="myapttest-compiler" target="1.7" />
+      <module name="mysecondapt-compiler" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
